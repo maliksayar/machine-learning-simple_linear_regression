@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Predictor</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: #f4f7fb;
+            color: #172033;
+        }
+
+        .navbar {
+            padding: 22px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            border-bottom: 1px solid #e8edf4;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 21px;
+            font-weight: 800;
+            color: #142b4f;
+        }
+
+        .brand-icon {
+            background: #2563eb;
+            color: white;
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            font-size: 22px;
+        }
+
+        .nav-label {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .main-container {
+            max-width: 1150px;
+            margin: 55px auto;
+            padding: 0 20px;
+        }
+
+        .hero {
+            margin-bottom: 35px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 8px 13px;
+            background: #eaf1ff;
+            color: #2563eb;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 18px;
+        }
+
+        .hero h1 {
+            font-size: clamp(30px, 5vw, 45px);
+            letter-spacing: -1.5px;
+            line-height: 1.2;
+            margin-bottom: 14px;
+        }
+
+        .hero h1 span {
+            color: #2563eb;
+        }
+
+        .hero p {
+            color: #64748b;
+            max-width: 600px;
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 25px;
+            align-items: start;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e8edf4;
+            border-radius: 22px;
+            padding: 32px;
+            box-shadow: 0 10px 35px rgba(15, 35, 75, 0.04);
+        }
+
+        .card-header {
+            margin-bottom: 28px;
+        }
+
+        .card-header h2 {
+            font-size: 21px;
+            margin-bottom: 8px;
+        }
+
+        .card-header p {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #344258;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid #dce4ef;
+            border-radius: 12px;
+            outline: none;
+            background: #f9fbfd;
+            font-size: 15px;
+            color: #172033;
+            transition: 0.2s;
+        }
+
+        .input-wrapper input:focus {
+            border-color: #3b82f6;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        }
+
+        .input-wrapper input::placeholder {
+            color: #b0bdce;
+        }
+
+        .input-hint {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        .submit-btn {
+            width: 100%;
+            border: none;
+            border-radius: 13px;
+            padding: 17px;
+            margin-top: 28px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.2);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.28);
+        }
+
+        .result-card {
+            background: linear-gradient(145deg, #10284c, #173b70);
+            color: white;
+            border-radius: 22px;
+            padding: 30px;
+            min-height: 300px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .result-card::after {
+            content: "";
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.15);
+            right: -90px;
+            bottom: -90px;
+        }
+
+        .result-label {
+            color: #a9c6ee;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .result-card h2 {
+            font-size: 30px;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .price {
+            font-size: 36px;
+            font-weight: 800;
+            color: #60a5fa;
+            margin: 25px 0;
+            word-break: break-word;
+        }
+
+        .result-description {
+            color: #c2d3e9;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .result-divider {
+            height: 1px;
+            background: rgba(255,255,255,0.12);
+            margin: 24px 0;
+        }
+
+        .result-footer {
+            color: #b2c8e4;
+            font-size: 12px;
+        }
+
+        .features {
+            margin-top: 25px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .feature {
+            background: white;
+            border: 1px solid #e8edf4;
+            border-radius: 14px;
+            padding: 18px;
+        }
+
+        .feature strong {
+            display: block;
+            margin-bottom: 7px;
+            color: #2563eb;
+            font-size: 14px;
+        }
+
+        .feature p {
+            color: #64748b;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        footer {
+            text-align: center;
+            padding: 35px 20px;
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        @media (max-width: 850px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .navbar {
+                padding: 18px 5%;
+            }
+
+            .main-container {
+                margin: 35px auto;
+            }
+
+            .card {
+                padding: 22px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="brand">
+            <div class="brand-icon">⌂</div>
+            <span>Estate<span style="color:#2563eb">Predict</span></span>
+        </div>
+
+        <div class="nav-label">ML Project</div>
+    </nav>
+
+    <main class="main-container">
+
+        <section class="hero">
+            <div class="tag">AI-POWERED PROPERTY ESTIMATION</div>
+
+            <h1>Predict your home's <span>market value.</span></h1>
+
+            <p>
+                Enter your property's details and let our multiple linear regression
+                model estimate its price based on the features of your house.
+            </p>
+        </section>
+
+        <div class="content-grid">
+
+            <!-- INPUT FORM -->
+            <div class="card">
+
+                <div class="card-header">
+                    <h2>Property Details</h2>
+                    <p>Provide accurate information for a better prediction.</p>
+                </div>
+
+                <form action="#" method="post">
+
+                    <div class="form-grid">
+
+                        <div class="form-group">
+                            <label for="area">Property Area</label>
+                            <div class="input-wrapper">
+                                <input
+                                    type="number"
+                                    id="area"
+                                    name="area"
+                                    placeholder="e.g. 1500"
+                                    min="1"
+                                    required
+                                >
+                            </div>
+                            <span class="input-hint">Area in square feet</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bed">Bedrooms</label>
+                            <div class="input-wrapper">
+                                <input
+                                    type="number"
+                                    id="bed"
+                                    name="bed"
+                                    placeholder="e.g. 3"
+                                    min="0"
+                                    required
+                                >
+                            </div>
+                            <span class="input-hint">Total number of bedrooms</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bath">Bathrooms</label>
+                            <div class="input-wrapper">
+                                <input
+                                    type="number"
+                                    id="bath"
+                                    name="bath"
+                                    placeholder="e.g. 2"
+                                    min="0"
+                                    required
+                                >
+                            </div>
+                            <span class="input-hint">Total number of bathrooms</span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="age">Property Age</label>
+                            <div class="input-wrapper">
+                                <input
+                                    type="number"
+                                    id="age"
+                                    name="age"
+                                    placeholder="e.g. 5"
+                                    min="0"
+                                    required
+                                >
+                            </div>
+                            <span class="input-hint">Age in years</span>
+                        </div>
+
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        ✦ &nbsp; Predict House Price
+                    </button>
+
+                </form>
+            </div>
+
+            <!-- PREDICTION RESULT -->
+            <div class="result-card">
+
+                <div class="result-label">YOUR ESTIMATED PROPERTY VALUE</div>
+
+                <h2>Prediction Result</h2>
+
+                <div class="price">
+                    {{result}}
+                </div>
+
+                <p class="result-description">
+                    Your estimated house price will appear here after submitting
+                    the property information to the prediction model.
+                </p>
+
+                <div class="result-divider"></div>
+
+                <div class="result-footer">
+                    Powered by Multiple Linear Regression
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- FEATURES -->
+        <section class="features">
+
+            <div class="feature">
+                <strong>📐 Area</strong>
+                <p>Property size is one of the key factors influencing estimated value.</p>
+            </div>
+
+            <div class="feature">
+                <strong>🛏 Bedrooms</strong>
+                <p>The number of bedrooms helps describe the property's capacity.</p>
+            </div>
+
+            <div class="feature">
+                <strong>🚿 Bathrooms & Age</strong>
+                <p>Additional property characteristics used by the regression model.</p>
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer>
+        House Price Prediction System · Machine Learning Project
+        <br><br>
+        Predictions are estimates and may not represent actual market prices.
+    </footer>
+
+</body>
+</html>
